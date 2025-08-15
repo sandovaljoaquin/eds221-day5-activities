@@ -1,0 +1,32 @@
+---
+title: "Runoff Volumes"
+output: html_document
+date: "2025-08-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Sourcing storm_runoff.R so we can use the predict_runoff() function 
+
+source(here::here("src", "storm_runoff.R"))
+
+```
+
+```{r}
+#Use function to estimate storm water volume for a watershed of 182 acres over a range of estimates for the impervious fraction (0.6 to 0.8, by 0.01)
+
+Ia_seq <- seq(from = 0.6, to = 0.8, by = 0.01)
+
+resulting_runoff <- predict_runoff(Ia_seq, 182)
+
+resulting_dataframe <- data.frame(resulting_runoff)
+
+
+ggplot(data = resulting_dataframe, 
+       aes(x))
+
+```
+
