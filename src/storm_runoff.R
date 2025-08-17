@@ -17,11 +17,6 @@ predict_runoff <- function(Ia, A) {
   return(V)
 }
 
-library(tidyverse)
-library(here)
-
-
-
 
 
 

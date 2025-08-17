@@ -1,0 +1,74 @@
+---
+title: "Tilapia"
+output: html_document
+date: "2025-08-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+```{r}
+#Read in tilapia data 
+us_tilapia_imports <- read_csv(here::here("data", "us_tilapia_imports.csv"))
+
+#look at data
+summary(us_tilapia_imports)
+names(us_tilapia_imports)
+dim(us_tilapia_imports)
+
+#using pivot longer to reshape data into 'long format' and coerce the year column into numeric
+
+us_tilapia_imports_long <- us_tilapia_imports |> 
+  pivot_longer(cols = "1992":"2018",
+                               names_to = "year",
+                               values_to = "tilapia_volume_kpounds") |> mutate(year = as.numeric(year))
+
+```
+
+
+```{r}
+#Use dplyr::group_by() |> summarize to find the total US tilapia imports by year and store 
+
+yearly_tilapia_tot <- us_tilapia_imports_long |>  dplyr::group_by(year) |> 
+  summarize(annual_total = sum(tilapia_volume_kpounds, na.rm = TRUE))
+
+```
+
+```{r}
+#Now, create a ggplot line graph of total US tilapia imports for all years 
+
+us_total_imports_plot <- ggplot(data = yearly_tilapia_tot, aes(x = year, 
+                                      y = annual_total)) + 
+  geom_line()
+
+ggsave(here::here("figs", "us_total_imports_plot.png"))
+      
+```
+
+```{r}
+#create a subset that only rerains imports from Ecuador, Honduras, Costa Rica, and Mexico 
+
+limited_tilapia_import <- us_tilapia_imports_long |> 
+  filter(country %in% c("Ecuador", "Honduras", "Costa Rica", "Mexico"))
+
+
+
+```
+
+```{r}
+ #Create a ggplot graph of total US tilapia imports over time, with 4 countries above , separated by country. 
+
+limited_tilapia_import_plot <- ggplot(limited_tilapia_import, aes(x = year,
+                                                                  y = tilapia_volume_kpounds)) + 
+  geom_line(aes(color = country)) + 
+  xlab("Year") + 
+  ylab("Total Volume of Tilapia (Kilopounds")
+
+ggsave(here::here("figs","limited_tilapia_import_plot.png"))
+
+```
+
